@@ -396,7 +396,7 @@ void TransferFunction::load(const std::string& filename, const FileExtension& ex
 
         clearPoints();
 
-        layer->getRepresentation<LayerRAM>()->dispatch<void>([this](auto lrprecision) {
+        layer->getRepresentation<LayerRAM>()->dispatch<void, dispatching::filter::All>([this](auto lrprecision) {
             auto data = lrprecision->getDataTyped();
             const auto size = lrprecision->getDimensions().x;
 

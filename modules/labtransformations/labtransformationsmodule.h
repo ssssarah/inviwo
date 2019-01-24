@@ -10,17 +10,17 @@
 
 #pragma once
 
-#include <dh2320lab1/dh2320lab1moduledefine.h>
+#include <labtransformations/labtransformationsmoduledefine.h>
 #include <inviwo/core/common/inviwomodule.h>
 
 namespace inviwo
 {
 
-class IVW_MODULE_DH2320LAB1_API DH2320Lab1Module : public InviwoModule
+class IVW_MODULE_LABTRANSFORMATIONS_API LabTransformationsModule : public InviwoModule
 {
 public:
-    DH2320Lab1Module(InviwoApplication* app);
-    virtual ~DH2320Lab1Module() = default;
+    LabTransformationsModule(InviwoApplication* app);
+    virtual ~LabTransformationsModule() = default;
 };
 
 } // namespace

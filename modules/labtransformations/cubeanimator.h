@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <dh2320lab1/dh2320lab1moduledefine.h>
+#include <labtransformations/LabTransformationsmoduledefine.h>
 #include <inviwo/core/common/inviwo.h>
 #include <inviwo/core/processors/processor.h>
 #include <inviwo/core/ports/meshport.h>
@@ -22,19 +22,19 @@ namespace inviwo
 /** \docpage{org.inviwo.CubeAnimator, Cube Animator}
     ![](org.inviwo.CubeAnimator.png?classIdentifier=org.inviwo.CubeAnimator)
 
-    Processor that enables a special kind of transformation of a mesh (in our task: a die): 
+    Processor that enables a special kind of transformation of a mesh (in our task: a die):
     A rotation with a swirley motion on top of the circle, when the properties of the
     processor are animated with a Property Animator.
-    
+
     ### Inports
       * __meshIn__ Input mesh.
-    
+
     ### Outports
       * __<Outport1>__ Output mesh.
-    
+
     ### Properties
       * __radius__ Radius of the circle on which the mesh travels.
-      * .... more properties that you will add 
+      * .... more properties that you will add
 */
 
 
@@ -43,8 +43,8 @@ namespace inviwo
 
     @author Himangshu Saikia
 */
-class IVW_MODULE_DH2320LAB1_API CubeAnimator : public Processor
-{ 
+class IVW_MODULE_LABTRANSFORMATIONS_API CubeAnimator : public Processor
+{
 //Friends
 //Types
 public:

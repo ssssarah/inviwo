@@ -8,14 +8,14 @@
  *********************************************************************
  */
 
-#include <dh2320lab1/dh2320lab1module.h>
-#include <dh2320lab1/cubeanimator.h>
+#include <labtransformations/labtransformationsmodule.h>
+#include <labtransformations/cubeanimator.h>
 
 namespace inviwo
 {
 
-DH2320Lab1Module::DH2320Lab1Module(InviwoApplication* app) : InviwoModule(app, "DH2320Lab1")
-    
+LabTransformationsModule::LabTransformationsModule(InviwoApplication* app) : InviwoModule(app, "LabTransformations")
+
 {
 	registerProcessor<CubeAnimator>();
 }

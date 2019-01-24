@@ -8,7 +8,7 @@
  *********************************************************************
  */
 
-#include <dh2320lab1/cubeanimator.h>
+#include <labtransformations/cubeanimator.h>
 
 namespace inviwo
 {
@@ -18,7 +18,7 @@ const ProcessorInfo CubeAnimator::processorInfo_
 {
     "org.inviwo.CubeAnimator",      // Class identifier
     "Cube Animator",                // Display name
-    "DH2320",                 // Category
+    "VisGra",                 // Category
     CodeState::Experimental,  // Code state
     Tags::None,               // Tags
 };

@@ -1,11 +1,10 @@
 #--------------------------------------------------------------------
-# Inviwo DH2320Lab1 Module
-ivw_module(DH2320Lab1)
+# Inviwo LabTransformations Module
+ivw_module(LabTransformations)
 
 #--------------------------------------------------------------------
 # Add header files
 set(HEADER_FILES
-    #${CMAKE_CURRENT_SOURCE_DIR}/dh2320lab1processor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/cubeanimator.h
 )
 #~ ivw_group("Header Files" ${HEADER_FILES})
@@ -13,7 +12,6 @@ set(HEADER_FILES
 #--------------------------------------------------------------------
 # Add source files
 set(SOURCE_FILES
-    #${CMAKE_CURRENT_SOURCE_DIR}/dh2320lab1processor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/cubeanimator.cpp
 )
 ivw_group("Sources" ${SOURCE_FILES} ${HEADER_FILES})
@@ -22,7 +20,7 @@ ivw_group("Sources" ${SOURCE_FILES} ${HEADER_FILES})
 #--------------------------------------------------------------------
 # Add shaders
 set(SHADER_FILES
-    #${CMAKE_CURRENT_SOURCE_DIR}/glsl/DH2320LAB1processor.frag
+    #${CMAKE_CURRENT_SOURCE_DIR}/glsl/shader.frag
 )
 ivw_group("Shader Files" ${SHADER_FILES})
 
@@ -30,7 +28,7 @@ ivw_group("Shader Files" ${SHADER_FILES})
 #--------------------------------------------------------------------
 # Add Unittests
 set(TEST_FILES
-	#${CMAKE_CURRENT_SOURCE_DIR}/tests/unittests/DH2320LAB1-test.cpp
+	#${CMAKE_CURRENT_SOURCE_DIR}/tests/unittests/Some-test.cpp
 )
 ivw_add_unittest(${TEST_FILES})
 
