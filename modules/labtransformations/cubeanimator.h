@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <labtransformations/LabTransformationsmoduledefine.h>
+#include <labtransformations/labtransformationsmoduledefine.h>
 #include <inviwo/core/common/inviwo.h>
 #include <inviwo/core/processors/processor.h>
 #include <inviwo/core/ports/meshport.h>
