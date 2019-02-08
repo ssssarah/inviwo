@@ -80,8 +80,15 @@ protected:
     ///Mixes the two given colors using additive color mixing
     vec3 AdditiveColorMixing(const vec3& Color1, const vec3& Color2);
 
-    ///Mixes the two given colors using subtractive color mixing
-    vec3 SubtractiveColorMixing(const vec3& Color1, const vec3& Color2);
+    /** Mixes the two given colors using subtractive color mixing.
+
+        @param ColorIncomingLight
+        The incoming light color spectrum that will hit the surface.
+
+        @param ColorSurface
+        The color spectrum of the surface.
+    */
+    vec3 SubtractiveColorMixing(const vec3& ColorIncomingLight, const vec3& ColorSurface);
 
 //Ports
 public:

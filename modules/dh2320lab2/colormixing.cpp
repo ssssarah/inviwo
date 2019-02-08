@@ -70,19 +70,25 @@ vec3 ColorMixing::AdditiveColorMixing(const vec3& Color1, const vec3& Color2)
 
 /*  Mixes the two given colors using subtractive color mixing.
 
+    @param ColorIncomingLight
+    The incoming light color spectrum that will hit the surface.
+
+    @param ColorSurface
+    The color spectrum of the surface.
+
     A color is encoded as three floating-point values in the interval [0, 1]:
 
     Color1.r refers to the red component of the color.
     Color1.g refers to the green component of the color.
     Color1.b refers to the blue component of the color.
 */
-vec3 ColorMixing::SubtractiveColorMixing(const vec3& Color1, const vec3& Color2)
+vec3 ColorMixing::SubtractiveColorMixing(const vec3& ColorIncomingLight, const vec3& ColorSurface)
 {
     vec3 MixedColor;
     vec3 Black(0,0,0);
     vec3 White(1,1,1);
 
-    MixedColor = Black + Color2;
+    MixedColor = Black + ColorSurface;
 
     return MixedColor;
 }
