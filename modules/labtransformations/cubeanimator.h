@@ -10,11 +10,11 @@
 
 #pragma once
 
-#include <labtransformations/labtransformationsmoduledefine.h>
 #include <inviwo/core/common/inviwo.h>
-#include <inviwo/core/processors/processor.h>
 #include <inviwo/core/ports/meshport.h>
+#include <inviwo/core/processors/processor.h>
 #include <inviwo/core/properties/ordinalproperty.h>
+#include <labtransformations/labtransformationsmoduledefine.h>
 
 namespace inviwo
 {
@@ -37,7 +37,6 @@ namespace inviwo
       * .... more properties that you will add
 */
 
-
 /** \class CubeAnimator
     \brief Special transformation of a mesh
 
@@ -45,37 +44,35 @@ namespace inviwo
 */
 class IVW_MODULE_LABTRANSFORMATIONS_API CubeAnimator : public Processor
 {
-//Friends
-//Types
-public:
-
-//Construction / Deconstruction
-public:
+    //Friends
+    //Types
+  public:
+    //Construction / Deconstruction
+  public:
     CubeAnimator();
     virtual ~CubeAnimator() = default;
 
-//Methods
-public:
+    //Methods
+  public:
     virtual const ProcessorInfo getProcessorInfo() const override;
     static const ProcessorInfo processorInfo_;
 
-protected:
+  protected:
     ///Our main computation function
     virtual void process() override;
 
-//Ports
-public:
+    //Ports
+  public:
     MeshInport meshIn_;
     MeshOutport meshOut_;
 
-//Properties
-public:
+    //Properties
+  public:
     FloatProperty radius_;
+	FloatProperty moveAroundTower;
 
-
-//Attributes
-private:
-
+    //Attributes
+  private:
 };
 
-} // namespace
+}// namespace inviwo
