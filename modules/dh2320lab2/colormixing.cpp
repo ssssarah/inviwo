@@ -9,7 +9,7 @@
  */
 
 #include <modules/dh2320lab2/colormixing.h>
-
+#include <algorithm> 
 
 namespace inviwo
 {
@@ -62,7 +62,10 @@ vec3 ColorMixing::AdditiveColorMixing(const vec3& Color1, const vec3& Color2)
     vec3 Black(0,0,0);
     vec3 White(1,1,1);
 
-    MixedColor = White - Color1;
+
+    MixedColor.r = std::min(Color1.r + Color2.r, White.r);
+    MixedColor.g = std::min(Color1.g + Color2.g, White.g);
+    MixedColor.b = std::min(Color1.b + Color2.b, White.b);
 
     return MixedColor;
 }
@@ -88,7 +91,9 @@ vec3 ColorMixing::SubtractiveColorMixing(const vec3& ColorIncomingLight, const v
     vec3 Black(0,0,0);
     vec3 White(1,1,1);
 
-    MixedColor = Black + ColorSurface;
+	MixedColor.r = std::min(ColorIncomingLight.r, ColorSurface.r);
+    MixedColor.g = std::min(ColorIncomingLight.g, ColorSurface.g);
+    MixedColor.b = std::min(ColorIncomingLight.b, ColorSurface.b);
 
     return MixedColor;
 }
