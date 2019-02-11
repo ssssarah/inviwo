@@ -16,13 +16,12 @@ namespace kth
 {
 
 // The Class Identifier has to be globally unique. Use a reverse DNS naming scheme
-const ProcessorInfo Chaikin::processorInfo_
-{
-    "org.inviwo.Chaikin",      // Class identifier
-    "Chaikin",                // Display name
-    "DH2320",              // Category
-    CodeState::Experimental,  // Code state
-    Tags::None,               // Tags
+const ProcessorInfo Chaikin::processorInfo_{
+    "org.inviwo.Chaikin",   // Class identifier
+    "Chaikin",              // Display name
+    "DH2320",               // Category
+    CodeState::Experimental,// Code state
+    Tags::None,             // Tags
 };
 
 const ProcessorInfo Chaikin::getProcessorInfo() const
@@ -30,12 +29,8 @@ const ProcessorInfo Chaikin::getProcessorInfo() const
     return processorInfo_;
 }
 
-
 Chaikin::Chaikin()
-    :Processor()
-    ,portInLines("InLines")
-    ,portOutLines("OutLines")
-    ,propMinNumDesiredPoints("MinNumDesiredPoints", "Num Points", 100, 1, 200, 1)
+    : Processor(), portInLines("InLines"), portOutLines("OutLines"), propMinNumDesiredPoints("MinNumDesiredPoints", "Num Points", 100, 1, 200, 1)
 {
     addPort(portInLines);
     addPort(portOutLines);
@@ -57,18 +52,44 @@ void Chaikin::CornerCutting(const std::vector<vec3>& ControlPolygon,
 
     const size_t NumPointsPerPolygonLeg = 1 + MinNumDesiredPoints / ControlPolygon.size();
     Curve.reserve(NumPointsPerPolygonLeg * ControlPolygon.size());
-    for(size_t i(0);i<ControlPolygon.size();i++)
-    {
-        const vec3& LeftPoint = ControlPolygon[i];
-        const vec3& RightPoint = ControlPolygon[(i+1) % ControlPolygon.size()];
 
-        //Linearly interpolate between left and right point in the t-interval [0,1)
-        for(size_t j(0);j<NumPointsPerPolygonLeg;j++)
+    std::vector<vec3> ControlPolygonStoredVals;
+    
+	//Copy the initial values to a different vector
+	for (size_t k(0); k < ControlPolygon.size(); k++)
+        ControlPolygonStoredVals.push_back(ControlPolygon[k]);
+
+    std::vector<vec3> helper;
+
+	//Iterate through the number of splits
+    for (size_t j(0); j < NumPointsPerPolygonLeg; j++)
+    {
+        helper.clear();
+
+        for (size_t i(0); i < ControlPolygonStoredVals.size(); i++)
         {
-            const float t = float(j) / float(NumPointsPerPolygonLeg); //Gives values from 0 to almost 1
-            Curve.push_back((1-t) * LeftPoint + t * RightPoint);
-        }
-    }
+            const vec3& LeftPoint = ControlPolygonStoredVals[i];
+            const vec3& RightPoint = ControlPolygonStoredVals[(i + 1) % ControlPolygonStoredVals.size()];
+
+			// First points to discover is at 1/4 distance from the LeftPoint
+            float t = 0.25;
+            helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+
+			// Second points to discover is at 3/4 distance from the LeftPoint
+            t = 0.75;
+            helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+            
+		}
+
+        ControlPolygonStoredVals.clear();
+       
+		for (size_t k(0); k < helper.size(); k++)
+            ControlPolygonStoredVals.push_back(helper[k]);
+
+	}
+
+    Curve = helper;
+
 }
 
 void Chaikin::process()
@@ -78,46 +99,48 @@ void Chaikin::process()
 
     //Prepare output data
     auto OutLines = std::make_shared<Mesh>(DrawType::Lines, ConnectivityType::Strip);
-    auto OutVertexBuffer = std::make_shared<Buffer<vec3> >();
+    auto OutVertexBuffer = std::make_shared<Buffer<vec3>>();
     auto OutVertices = OutVertexBuffer->getEditableRAMRepresentation();
     OutLines->addBuffer(BufferType::PositionAttrib, OutVertexBuffer);
 
-    for(auto InLines : MultiInLines)
+    for (auto InLines : MultiInLines)
     {
         //Vertex data
-        auto pit = util::find_if(InLines->getBuffers(), [](const auto& buf)
-        {
+        auto pit = util::find_if(InLines->getBuffers(), [](const auto& buf) {
             return buf.first.type == BufferType::PositionAttrib;
         });
-        if (pit == InLines->getBuffers().end()) return; //could not find a position buffer
+        if (pit == InLines->getBuffers().end())
+            return;//could not find a position buffer
         // - in RAM
         const auto posRam = pit->second->getRepresentation<BufferRAM>();
-        if (!posRam) return; //could not find a position buffer ram
+        if (!posRam)
+            return;//could not find a position buffer ram
         // - 3D
-        if (posRam->getDataFormat()->getComponents() != 3) return; //Only 3 dimensional meshes are supported
+        if (posRam->getDataFormat()->getComponents() != 3)
+            return;//Only 3 dimensional meshes are supported
         // - save into a reasonable format with transformed vertices
         std::vector<glm::vec3> AllVertices;
         Matrix<4, float> Trafo = InLines->getWorldMatrix();
         const size_t NumInVertices = posRam->getSize();
         AllVertices.reserve(NumInVertices);
-        for(size_t i(0);i<NumInVertices;i++)
+        for (size_t i(0); i < NumInVertices; i++)
         {
             dvec3 Position = posRam->getAsDVec3(i);
             glm::vec4 HomogeneousPos(Position.x, Position.y, Position.z, 1.0f);
             glm::vec4 TransformedHomogeneousPos = Trafo * HomogeneousPos;
 
-            AllVertices.push_back( vec3(TransformedHomogeneousPos.x / TransformedHomogeneousPos.w,
-                                        TransformedHomogeneousPos.y / TransformedHomogeneousPos.w,
-                                        TransformedHomogeneousPos.z / TransformedHomogeneousPos.w
-                                        ) );
+            AllVertices.push_back(vec3(TransformedHomogeneousPos.x / TransformedHomogeneousPos.w,
+                                       TransformedHomogeneousPos.y / TransformedHomogeneousPos.w,
+                                       TransformedHomogeneousPos.z / TransformedHomogeneousPos.w));
         }
 
         //For each line buffer
         const auto& AllIndexBuffers = InLines->getIndexBuffers();
-        for(const auto& IdxBuffer : AllIndexBuffers)
+        for (const auto& IdxBuffer : AllIndexBuffers)
         {
             //Well, do we actually have lines? If not, next buffer!
-            if (IdxBuffer.first.dt != DrawType::Lines) continue;
+            if (IdxBuffer.first.dt != DrawType::Lines)
+                continue;
 
             //Get the indices of the lines
             const auto& Indices = IdxBuffer.second->getRAMRepresentation()->getDataContainer();
@@ -125,7 +148,7 @@ void Chaikin::process()
             //Create a simple vector of line vertices for the corner cutting
             std::vector<glm::vec3> LineVertices;
             LineVertices.reserve(Indices.size());
-            for(const auto& idx : Indices)
+            for (const auto& idx : Indices)
             {
                 if (LineVertices.empty() || LineVertices.back() != AllVertices[idx])
                 {
@@ -154,13 +177,13 @@ void Chaikin::process()
             OutLines->addIndicies(Mesh::MeshInfo(DrawType::Points, ConnectivityType::None), OutIndexBufferPoints);
             const size_t PreviousNumVertices = OutVertices->getSize();
             OutVertices->reserve(NumNewVertices + PreviousNumVertices);
-            for(size_t i(0);i<NumNewVertices;i++)
+            for (size_t i(0); i < NumNewVertices; i++)
             {
                 OutVertices->add(ChaikinVertices[i]);
                 OutIndices->add((uint32_t)(PreviousNumVertices + i));
                 OutIndicesPoints->add((uint32_t)(PreviousNumVertices + i));
             }
-            OutIndices->add((uint32_t)(PreviousNumVertices)); //Close loop.
+            OutIndices->add((uint32_t)(PreviousNumVertices));//Close loop.
         }
     }
 
@@ -168,6 +191,5 @@ void Chaikin::process()
     portOutLines.setData(OutLines);
 }
 
-} // namespace
-} // namespace
-
+}// namespace kth
+}// namespace inviwo
