@@ -47,6 +47,10 @@ void Chaikin::CornerCutting(const std::vector<vec3>& ControlPolygon,
                             const size_t MinNumDesiredPoints,
                             std::vector<vec3>& Curve)
 {
+
+	const float oneQuarter = 0.25;
+    const float threeQuersters = 1 - oneQuarter;
+
     //TODO: Extend and edit this code
     Curve.clear();
 
@@ -69,29 +73,34 @@ void Chaikin::CornerCutting(const std::vector<vec3>& ControlPolygon,
         for (size_t i(0); i < ControlPolygonStoredVals.size(); i++)
         {
             const vec3& LeftPoint = ControlPolygonStoredVals[i];
-            const vec3& RightPoint = ControlPolygonStoredVals[(i + 1) % ControlPolygonStoredVals.size()];
-            const vec3& RightRightPoint = ControlPolygonStoredVals[(i + 2) % ControlPolygonStoredVals.size()];
+            const vec3& currLeftPoint = ControlPolygonStoredVals[(i + 1) % ControlPolygonStoredVals.size()];
+            const vec3& currRightPoint = ControlPolygonStoredVals[(i + 2) % ControlPolygonStoredVals.size()];
+            const vec3& RightPoint = ControlPolygonStoredVals[(i + 3) % ControlPolygonStoredVals.size()];
 
-			double angle = computeAngle(LeftPoint, RightPoint, RightRightPoint);
+			const vec3& leftInterpPoint = oneQuarter * LeftPoint + threeQuersters * currLeftPoint;
+            const vec3& currLeftInterpPoint = threeQuersters * currLeftPoint + oneQuarter * currRightPoint;
+            const vec3& currRightInterpPoint = oneQuarter * currLeftPoint + threeQuersters * currRightPoint;
+            const vec3& rightInterpPoint = threeQuersters * currRightPoint + oneQuarter * RightPoint;
 
-			std::cout << "angle" << angle;
+			double angleLeft = computeAngle(leftInterpPoint, 
+				currLeftInterpPoint, currRightInterpPoint);
 
-			if (angle < 0.1 || angle > 3)
-			{
-                i++;
-                
-            }
+            double angleRight = computeAngle(currLeftInterpPoint,
+				currRightInterpPoint, rightInterpPoint);
+			
+			if (!((angleLeft < 0.05 || angleLeft > 3.09) && (angleRight < 0.05 || angleRight > 3.09)))
+            {
+           
+                helper.push_back(currLeftInterpPoint);
+                helper.push_back(currRightInterpPoint);
+        
+			}
             else
             {
-                // First points to discover is at 1/4 distance from the LeftPoint
-                float t = 0.25;
-                helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+                helper.push_back(currLeftPoint);
+                helper.push_back(currRightPoint);
 
-                // Second points to discover is at 3/4 distance from the LeftPoint
-                t = 0.75;
-                helper.push_back((1 - t) * LeftPoint + t * RightPoint);
-        
-			}   
+			} 
 		}
 
         ControlPolygonStoredVals.clear();
