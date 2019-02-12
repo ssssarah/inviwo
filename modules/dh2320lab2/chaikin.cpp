@@ -54,14 +54,14 @@ void Chaikin::CornerCutting(const std::vector<vec3>& ControlPolygon,
     Curve.reserve(NumPointsPerPolygonLeg * ControlPolygon.size());
 
     std::vector<vec3> ControlPolygonStoredVals;
-    
-	//Copy the initial values to a different vector
-	for (size_t k(0); k < ControlPolygon.size(); k++)
+
+    //Copy the initial values to a different vector
+    for (size_t k(0); k < ControlPolygon.size(); k++)
         ControlPolygonStoredVals.push_back(ControlPolygon[k]);
 
     std::vector<vec3> helper;
 
-	//Iterate through the number of splits
+    //Iterate through the number of splits
     for (size_t j(0); j < NumPointsPerPolygonLeg; j++)
     {
         helper.clear();
@@ -70,26 +70,59 @@ void Chaikin::CornerCutting(const std::vector<vec3>& ControlPolygon,
         {
             const vec3& LeftPoint = ControlPolygonStoredVals[i];
             const vec3& RightPoint = ControlPolygonStoredVals[(i + 1) % ControlPolygonStoredVals.size()];
+            const vec3& RightRightPoint = ControlPolygonStoredVals[(i + 2) % ControlPolygonStoredVals.size()];
 
-			// First points to discover is at 1/4 distance from the LeftPoint
-            float t = 0.25;
-            helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+			double angle = computeAngle(LeftPoint, RightPoint, RightRightPoint);
 
-			// Second points to discover is at 3/4 distance from the LeftPoint
-            t = 0.75;
-            helper.push_back((1 - t) * LeftPoint + t * RightPoint);
-            
+			std::cout << "angle" << angle;
+
+			if (angle < 0.1 || angle > 3)
+			{
+                i++;
+                
+            }
+            else
+            {
+                // First points to discover is at 1/4 distance from the LeftPoint
+                float t = 0.25;
+                helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+
+                // Second points to discover is at 3/4 distance from the LeftPoint
+                t = 0.75;
+                helper.push_back((1 - t) * LeftPoint + t * RightPoint);
+        
+			}   
 		}
 
         ControlPolygonStoredVals.clear();
-       
-		for (size_t k(0); k < helper.size(); k++)
-            ControlPolygonStoredVals.push_back(helper[k]);
 
-	}
+        for (size_t k(0); k < helper.size(); k++)
+            ControlPolygonStoredVals.push_back(helper[k]);
+    }
 
     Curve = helper;
+}
 
+double Chaikin::computeAngle(const vec3 leftPoint, 
+	const vec3 rightPoint, 
+	const vec3 rightRightPoint)
+{
+    vec3 vecB = rightPoint - rightRightPoint;
+    vec3 vecA = rightPoint - leftPoint;
+
+	double angle = std::acos(dot(vecA, vecB) / (mag(vecA) * mag(vecB)));
+
+	return angle;
+}
+
+float Chaikin::dot(vec3 a, vec3 b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+float Chaikin::mag(vec3 a)//calculates magnitude of a
+{
+    return std::sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
 void Chaikin::process()

@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <modules/dh2320lab2/dh2320lab2moduledefine.h>
 #include <inviwo/core/common/inviwo.h>
-#include <inviwo/core/processors/processor.h>
 #include <inviwo/core/ports/meshport.h>
+#include <inviwo/core/processors/processor.h>
+#include <modules/dh2320lab2/dh2320lab2moduledefine.h>
 //#include <inviwo/core/ports/volumeport.h>
 //#include <inviwo/core/ports/meshport.h>
 //#include <inviwo/core/properties/boolcompositeproperty.h>
@@ -48,7 +48,6 @@ namespace kth
       * __<Prop2>__ <description>
 */
 
-
 /** \class Chaikin
     \brief VERY_BRIEFLY_DESCRIBE_THE_PROCESSOR
     
@@ -57,44 +56,47 @@ namespace kth
     @author Tino Weinkauf
 */
 class IVW_MODULE_DH2320LAB2_API Chaikin : public Processor
-{ 
-//Friends
-//Types
-public:
-
-//Construction / Deconstruction
-public:
+{
+    //Friends
+    //Types
+  public:
+    //Construction / Deconstruction
+  public:
     Chaikin();
     virtual ~Chaikin() = default;
-     
-//Methods
-public:
+
+    //Methods
+  public:
     virtual const ProcessorInfo getProcessorInfo() const override;
     static const ProcessorInfo processorInfo_;
 
-protected:
+  protected:
     ///Our main computation function
     virtual void process() override;
+    double computeAngle(vec3 leftPoint, 
+		vec3 rightPoint, 
+		vec3 rightRightPoint);
+    float Chaikin::dot(vec3 a, vec3 b);
+    float Chaikin::mag(vec3 a);
 
     ///Applies Chaikin's Corner Cutting algorithm
     void CornerCutting(const std::vector<vec3>& ControlPolygon, const size_t MinNumDesiredPoints, std::vector<vec3>& Curve);
 
-//Ports
-public:
+    //Ports
+  public:
     ///Line input
     MeshMultiInport portInLines;
 
     ///Line output
     MeshOutport portOutLines;
 
-//Properties
-public:
+    //Properties
+  public:
     IntProperty propMinNumDesiredPoints;
 
-//Attributes
-private:
-
+    //Attributes
+  private:
 };
 
-} // namespace
-} // namespace
+}// namespace kth
+}// namespace inviwo
